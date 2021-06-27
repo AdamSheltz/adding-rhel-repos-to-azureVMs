@@ -1,17 +1,25 @@
 #!/bin/bash
+Azure_Global=("13.91.47.76" "40.85.190.91" "52.187.75.218" "52.174.163.213" "52.237.203.198")
+Azure_US_Government=("13.72.186.193"  "13.72.14.155" "52.244.249.194")
+Azure_Germany=("51.5.243.77" "51.4.228.145")
+region=()
+
 checknetwork(){
-echo "Checking path to Azure Rhel repos for public cloud."
+        echo -n "Checking path to Azure RHEL repos for cloud."
+        for x in ${region[@]}; do
+                if  TESTCONNECTION=$(echo > /dev/tcp/$x/443);
+                    [[ $TESTCONNECTION -eq 0 ]]; then
+                        echo "This VM can connect to $x via port 443."
+                else
+                        echo "There is a connectivity issue when trying to connect to $x. Exitting script."
+                        echo "Please resolve for the following IP addresses. ${region[@]}"
+                        exit
 
-#if ip/port is closed echo "check path to $x" exit
-#for x in 13.91.47.76 40.85.190.91 52.187.75.218 52.174.163.213 52.237.203.198;
-#do   ip_portopen=$(echo > /dev/tcp/$x/443 && echo "$x port 443 is open.") ;
-#       if [ $ip_portopen -eq 0 ] ;then
-#       echo "Path to $x is failing. Please mitigate before running this script again."&& exit;
-#       fi
-#done
+                fi;
 
+        done
+        checkVersionRHEL;
 }
-
 
 rhel6(){
         echo "RHEL 6"
@@ -39,8 +47,8 @@ EOF
         sudo dnf update
 }
 
-checknetwork;
 
+checkVersionRHEL(){
 if  grep -q -i "release 6" /etc/redhat-release ; then
         rhel6;
 elif grep -q -i "release 7" /etc/redhat-release ; then
@@ -50,5 +58,24 @@ elif grep -q -i "release 8" /etc/redhat-release ; then
 else
         echo "I do not find a version of Red Hat that matches Microsoft guidance for Azure VMs!"
 fi
+}
 
 
+
+case "$1" in
+        global)
+                region+="${Azure_Global[@]}"
+                checknetwork;
+        ;;
+        usgovt)
+                region+="${Azuer_US_Government[@]}"
+                checknetwork;
+        ;;
+        germany)
+                region+="${Azure_Germany[@]}"
+                checknetwork;
+        ;;
+        *)
+                echo -n "Please use $0 global, usgovt, or germany."
+        ;;
+esac
