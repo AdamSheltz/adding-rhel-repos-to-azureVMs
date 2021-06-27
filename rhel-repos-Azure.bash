@@ -13,7 +13,7 @@ checknetwork(){
                 else
                         echo "There is a connectivity issue when trying to connect to $x. Exitting script."
                         echo "Please resolve for the following IP addresses. ${region[@]}"
-                        exit
+                        exit 1
 
                 fi;
 
