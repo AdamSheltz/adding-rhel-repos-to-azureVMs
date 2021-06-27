@@ -11,7 +11,7 @@ checknetwork(){
                     [[ $TESTCONNECTION -eq 0 ]]; then
                         echo "This VM can connect to $x via port 443."
                 else
-                        echo "There is a connectivity issue when trying to connect to $x. Exitting script."
+                        echo "There is a connectivity issue when trying to connect to $x."
                         echo "Please resolve for the following IP addresses. ${region[@]}"
                         exit 1
 
