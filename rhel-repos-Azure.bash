@@ -11,16 +11,16 @@ checknetwork(){
                     [[ $TESTCONNECTION -eq 0 ]]; then
                         echo "This VM can connect to $x via port 443."
                 else
-                        echo "There is a connectivity issue when trying to connect to $x."
+                        echo "There is a connectivity issue when trying to connect to $x. Exitting script."
                         echo "Please resolve for the following IP addresses. ${region[@]}"
-                        exit 1
+                        exit
 
                 fi;
 
         done
         checkVersionRHEL;
 }
-
+## https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/redhat/redhat-rhui#manual-update-procedure-to-use-the-azure-rhui-servers
 rhel6(){
         echo "RHEL 6"
         yum --config='https://rhelimage.blob.core.windows.net/repositories/rhui-microsoft-azure-rhel6.config' install 'rhui-azure-rhel6'
@@ -49,17 +49,46 @@ EOF
 
 
 checkVersionRHEL(){
-if  grep -q -i "release 6" /etc/redhat-release ; then
+
+if  [[ "$RHELVERSION" ==  *"release 6"* ]]; then
         rhel6;
-elif grep -q -i "release 7" /etc/redhat-release ; then
+elif [[ "$RHELVERSION" == *"release 7"* ]] ; then
         rhel7;
-elif grep -q -i "release 8" /etc/redhat-release ; then
+elif [[ "$RHELVERSION" == *"release 8"* ]] ; then
         rhel8;
 else
         echo "I do not find a version of Red Hat that matches Microsoft guidance for Azure VMs!"
 fi
 }
 
+lock7(){
+yum --disablerepo='*' remove 'rhui-azure-rhel7'
+yum --config='https://rhelimage.blob.core.windows.net/repositories/rhui-microsoft-azure-rhel7-eus.config' install 'rhui-azure-rhel7-eus'
+echo $(. /etc/os-release && echo $VERSION_ID) > /etc/yum/vars/releasever
+echo "If there were no errors run 'sudo yum update'."
+}
+
+lock8(){
+yum --disablerepo='*' remove 'rhui-azure-rhel8'
+wget https://rhelimage.blob.core.windows.net/repositories/rhui-microsoft-azure-rhel8-eus.config
+yum --config=rhui-microsoft-azure-rhel8-eus.config install rhui-azure-rhel8-eus
+echo $(. /etc/os-release && echo $VERSION_ID) > /etc/yum/vars/releasever
+echo "If there were no errors run 'sudo yum update'."
+}
+
+versionLock(){
+# https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/redhat/redhat-rhui
+	echo "Locking version of RHEL to version: ."
+
+	if [[ "$RHELVERSION" == *"release 7"* ]]; then
+		lock7;
+	elif [[ "$RHELVERSION" == *"release 8"* ]]; then
+		lock8;
+	else
+		echo "I do not find a version of Red Hat for locking the REPOS for Microsoft guidance for Azure VMs!"
+
+
+}
 
 
 case "$1" in
@@ -75,7 +104,10 @@ case "$1" in
                 region+="${Azure_Germany[@]}"
                 checknetwork;
         ;;
+	versionlock)
+		versionLock;
+	;;
         *)
-                echo -n "Please use $0 global, usgovt, or germany."
+                echo -n "Please use $0 global, usgovt, or germany to add RHEL Repos or versionlock to Lock Repos to a version of RHEL."
         ;;
 esac
