@@ -3,6 +3,7 @@ Azure_Global=("13.91.47.76" "40.85.190.91" "52.187.75.218" "52.174.163.213" "52.
 Azure_US_Government=("13.72.186.193"  "13.72.14.155" "52.244.249.194")
 Azure_Germany=("51.5.243.77" "51.4.228.145")
 region=()
+RHELVERSION=$(cat /etc/redhat-release)
 
 checknetwork(){
         echo -n "Checking path to Azure RHEL repos for cloud."
@@ -79,14 +80,14 @@ echo "If there were no errors run 'sudo yum update'."
 versionLock(){
 # https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/redhat/redhat-rhui
 	echo "Locking version of RHEL to version: ."
-
+	
 	if [[ "$RHELVERSION" == *"release 7"* ]]; then
 		lock7;
 	elif [[ "$RHELVERSION" == *"release 8"* ]]; then
 		lock8;
 	else
 		echo "I do not find a version of Red Hat for locking the REPOS for Microsoft guidance for Azure VMs!"
-
+	fi
 
 }
 
