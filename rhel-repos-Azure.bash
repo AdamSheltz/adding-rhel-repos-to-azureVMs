@@ -57,6 +57,7 @@ else
         dnf install wget
         if [[ $? -eq 1 ]]; then
                 echo "WGET not installed. Please rectify."
+		exit 1 
         fi
 fi
 }
