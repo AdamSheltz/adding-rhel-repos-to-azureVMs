@@ -48,6 +48,18 @@ EOF
         sudo dnf update
 }
 
+testWget(){
+# is wget already installed?
+TESTWGET=$(wget github.com)
+if [[  $? -eq 0 ]]; then
+        echo "wget is installed"
+else
+        dnf install wget
+        if [[ $? -eq 1 ]]; then
+                echo "WGET not installed. Please rectify."
+        fi
+fi
+}
 
 checkVersionRHEL(){
 
@@ -70,6 +82,7 @@ echo "If there were no errors run 'sudo yum update'."
 }
 
 lock8(){
+testWget;
 yum --disablerepo='*' remove 'rhui-azure-rhel8'
 wget https://rhelimage.blob.core.windows.net/repositories/rhui-microsoft-azure-rhel8-eus.config
 yum --config=rhui-microsoft-azure-rhel8-eus.config install rhui-azure-rhel8-eus
