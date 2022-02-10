@@ -1,4 +1,14 @@
 #!/bin/bash
+# Sample Code is provided for the purpose of illustration only and is not intended to be used in a production environment. 
+# THIS SAMPLE CODE AND ANY RELATED INFORMATION ARE PROVIDED "AS IS" WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED, 
+# INCLUDING BUT NOT LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A PARTICULAR PURPOSE.
+# We grant You a nonexclusive, royalty-free right to use and modify the Sample Code and to reproduce and distribute the 
+# object code form of the Sample Code, provided that. You agree: (i) to not use Our name, logo, or trademarks to market Your 
+# software product in which the Sample Code is embedded; (ii) to include a valid copyright notice on Your software product in 
+# which the Sample Code is embedded; and (iii) to indemnify, hold harmless, and defend Us and Our suppliers from and against
+# any claims or lawsuits, including attorneys’ fees, that arise or result from the use or distribution of the Sample Code
+
+#Variables/Arrays
 Azure_Global=("13.91.47.76" "40.85.190.91" "52.187.75.218" "52.174.163.213" "52.237.203.198")
 Azure_US_Government=("13.72.186.193"  "13.72.14.155" "52.244.249.194")
 Azure_Germany=("51.5.243.77" "51.4.228.145")
